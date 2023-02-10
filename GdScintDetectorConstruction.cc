@@ -254,12 +254,14 @@ G4VPhysicalVolume* GdScintDetectorConstruction::Construct()
   G4double VesselOut_sizeRmax = 1.0*foot;   // outer radius
   G4double VesselOut_sizeSPhi = 0.0;        // starting angle 
   G4double VesselOut_sizeDPhi = 2.0*pi;     // ending angle
+  G4Material* VesselOut_mat = SS;          // stainless steel material
 
   G4double VesselIn_sizeZ = VesselOut_sizeZ - 0.375*inch; // outer vessel length minus wall thickness
   G4double VesselIn_sizeRmin = VesselOut_sizeRmin;   // inner radius
   G4double VesselIn_sizeRmax = VesselOut_sizeRmax - 0.375*inch;   // outer radius minus wall thickness
   G4double VesselIn_sizeSPhi = 0.0;     // starting angle 
   G4double VesselIn_sizeDPhi = 2.0*pi;     // ending angle 
+  G4Material* VesselIn_mat = SS;          // stainless steel material
 
   G4double Vessel_posX = 0.*cm;         // x position with respect to world origin
   G4double Vessel_posY = 0.*cm;         // y position with respect to world origin
@@ -274,14 +276,14 @@ G4VPhysicalVolume* GdScintDetectorConstruction::Construct()
                         Vessel_mat,             //material
                         "Vessel");             //name
 
-  new G4PVPlacement(0,                       //no rotation
+  new G4PVPlacement(0,                         //no rotation
                     G4ThreeVector(Vessel_posX,Vessel_posY,Vessel_posZ), //position in the world volume
                     logicVessel,                //logical volume
                     "Vessel",                   //name
-                    logicWorld,              //world  volume
-                    false,                   //no boolean operation
-                    0,                       //
-                    checkOverlaps);          //overlaps checking
+                    logicWorld,                 //world  volume
+                    false,                      //no boolean operation
+                    0,                          //
+                    checkOverlaps);             //overlaps checking
   
   // Vac Cylinder
   
@@ -299,7 +301,7 @@ G4VPhysicalVolume* GdScintDetectorConstruction::Construct()
   G4double Vac_sizeDPhi = 2.0*pi;     // ending angle
   
     G4LogicalVolume* logicVac =
-    new G4LogicalVolume(gasVac,            //solid
+    new G4LogicalVolume(solidVac,            // 
                         Vac_mat,             //material
                         "Vac");             //name
 
