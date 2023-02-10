@@ -233,56 +233,85 @@ G4VPhysicalVolume* GdScintDetectorConstruction::Construct()
                       0,                     //copy number
                       checkOverlaps);        //overlaps checking
 
-  // Vacuum Cylinder
+  // Cylinder
   
-    G4Tubs* vacOut = new G4Tubs("vacout",
-                                vacOut_sizeRmin,
-                                vacOut_sizeRmax,
-                                vacOut_sizeZ,
-                                vacOut_sizeSPhi,
-                                vacOut_sizeDPhi);
+    G4Tubs* VesselOut = new G4Tubs("VesselOut",
+                                VesselOut_sizeRmin,
+                                VesselOut_sizeRmax,
+                                VesselOut_sizeZ,
+                                VesselOut_sizeSPhi,
+                                VesselOut_sizeDPhi);
 
-  G4Tubs* vacIn = new G4Tubs("vacin",
-                                vacIn_sizeRmin,
-                                vacIn_sizeRmax,
-                                vacIn_sizeZ,
-                                vacIn_sizeSPhi,
-                                vacIn_sizeDPhi);
+  G4Tubs* VesselIn = new G4Tubs("VesselIn",
+                                VesselIn_sizeRmin,
+                                VesselIn_sizeRmax,
+                                VesselIn_sizeZ,
+                                VesselIn_sizeSPhi,
+                                VesselIn_sizeDPhi);
                                 
-  G4double vacOut_sizeZ = 0.5*3.0*foot;      
-  G4double vacOut_sizeRmin = 0.0*foot;   // inner radius
-  G4double vacOut_sizeRmax = 1.0*foot;   // outer radius
-  G4double vacOut_sizeSPhi = 0.0;        // starting angle 
-  G4double vacOut_sizeDPhi = 2.0*pi;     // ending angle
+  G4double VesselOut_sizeZ = 0.5*3.0*foot;      
+  G4double VesselOut_sizeRmin = 0.0*foot;   // inner radius
+  G4double VesselOut_sizeRmax = 1.0*foot;   // outer radius
+  G4double VesselOut_sizeSPhi = 0.0;        // starting angle 
+  G4double VesselOut_sizeDPhi = 2.0*pi;     // ending angle
 
-  G4double vacIn_sizeZ = vesselOut_sizeZ - 0.375*inch; // outer vessel length minus wall thickness
-  G4double vacIn_sizeRmin = vesselOut_sizeRmin;   // inner radius
-  G4double vacIn_sizeRmax = vesselOut_sizeRmax - 0.375*inch;   // outer radius minus wall thickness
-  G4double vacIn_sizeSPhi = 0.0;     // starting angle 
-  G4double vacIn_sizeDPhi = 2.0*pi;     // ending angle 
+  G4double VesselIn_sizeZ = VesselOut_sizeZ - 0.375*inch; // outer vessel length minus wall thickness
+  G4double VesselIn_sizeRmin = VesselOut_sizeRmin;   // inner radius
+  G4double VesselIn_sizeRmax = VesselOut_sizeRmax - 0.375*inch;   // outer radius minus wall thickness
+  G4double VesselIn_sizeSPhi = 0.0;     // starting angle 
+  G4double VesselIn_sizeDPhi = 2.0*pi;     // ending angle 
 
-  G4double vac_posX = 0.*cm;         // x position with respect to world origin
-  G4double vac_posY = 0.*cm;         // y position with respect to world origin
-  G4double vac_posZ = 0.*cm;         // z position with respect to world origin
-  G4Material* vac_mat = SS;          // stainless steel material
+  G4double Vessel_posX = 0.*cm;         // x position with respect to world origin
+  G4double Vessel_posY = 0.*cm;         // y position with respect to world origin
+  G4double Vessel_posZ = 0.*cm;         // z position with respect to world origin
+  G4Material* Vessel_mat = SS;          // stainless steel material
 
 
-  G4SubtractionSolid* solidvac = new G4SubtractionSolid("Vac", vacOut, vacIn);
+  G4SubtractionSolid* solidVessel = new G4SubtractionSolid("Vessel", VesselOut, VesselIn);
 
-  G4LogicalVolume* logicVac =
-    new G4LogicalVolume(solidvac,            //solid
-                        vac_mat,             //material
+  G4LogicalVolume* logicVessel =
+    new G4LogicalVolume(solidVessel,            //solid
+                        Vessel_mat,             //material
+                        "Vessel");             //name
+
+  new G4PVPlacement(0,                       //no rotation
+                    G4ThreeVector(Vessel_posX,Vessel_posY,Vessel_posZ), //position in the world volume
+                    logicVessel,                //logical volume
+                    "Vessel",                   //name
+                    logicWorld,              //world  volume
+                    false,                   //no boolean operation
+                    0,                       //
+                    checkOverlaps);          //overlaps checking
+  
+  // Vac Cylinder
+  
+  G4Tubs* Vac = new G4Tubs("Vac",
+                                Vac_sizeRmin,
+                                Vac_sizeRmax,
+                                Vac_sizeZ,
+                                Vac_sizeSPhi,
+                                Vac_sizeDPhi);
+                                
+  G4double Vac_sizeZ = VesselIn_sizeZ - 0.001*inch;      
+  G4double Vac_sizeRmin = 0.0*foot;   // inner radius
+  G4double Vac_sizeRmax = VesselIn_sizeRmax - 0.001*inch;   // outer radius
+  G4double Vac_sizeSPhi = 0.0;        // starting angle 
+  G4double Vac_sizeDPhi = 2.0*pi;     // ending angle
+  
+    G4LogicalVolume* logicVac =
+    new G4LogicalVolume(gasVac,            //solid
+                        Vac_mat,             //material
                         "Vac");             //name
 
   new G4PVPlacement(0,                       //no rotation
-                    G4ThreeVector(vac_posX,vac_posY,vac_posZ), //position in the world volume
+                    G4ThreeVector(Vac_posX,Vac_posY,Vac_posZ), //position in the world volume
                     logicVac,                //logical volume
                     "Vac",                   //name
                     logicWorld,              //world  volume
                     false,                   //no boolean operation
                     0,                       //
                     checkOverlaps);          //overlaps checking
-
+  
   //
   // Scintillator - cylinder
   //
